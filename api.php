@@ -19,12 +19,10 @@ if ($method == 'POST') {
 
     $stmt = $conn->prepare("INSERT INTO transactions (type, expenseType, amount, date) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("ssis", $type, $expenseType, $amount, $date);
-    if($stmt->execute()){
-        echo json_encode(["message" => "Transaction added successfully"]);
-    } else {
-        echo json_encode(["error" => "Failed to add transaction"]);
-    }
+    $stmt->execute();
     $stmt->close();
+    
+    echo json_encode(["message" => "Transaction added successfully"]);
 } elseif ($method == 'GET') {
     $result = $conn->query("SELECT * FROM transactions ORDER BY date DESC");
     $transactions = [];
@@ -44,12 +42,10 @@ if ($method == 'POST') {
 
     $stmt = $conn->prepare("DELETE FROM transactions WHERE id = ?");
     $stmt->bind_param("i", $data['id']);
-    if($stmt->execute()){
-        echo json_encode(["message" => "Transaction deleted successfully"]);
-    } else {
-        echo json_encode(["error" => "Failed to delete transaction"]);
-    }
+    $stmt->execute();
     $stmt->close();
+
+    echo json_encode(["message" => "Transaction deleted successfully"]);
 }
 
 $conn->close();
