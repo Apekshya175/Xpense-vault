@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup - Expense Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('https://images.unsplash.com/photo-1605379399642-870262d3d051') no-repeat center center/cover;
+            color: #fff;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 350px;
+            color: black;
+        }
+        h2 {
+            color: #2e8b57;
+        }
+        .input-group {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .input-group input {
+            border: none;
+            outline: none;
+            background: transparent;
+            flex: 1;
+            padding: 8px;
+            color: black;
+        }
+        .btn {
+            background: #228B22;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #1e7a1e;
+        }
+        .social-login {
+            margin-top: 10px;
+        }
+        .social-login button {
+            border: none;
+            padding: 10px;
+            width: 100%;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+        .facebook {
+            background: #1877F2;
+            color: white;
+        }
+        .google {
+            background: white;
+            border: 1px solid black;
+            color: black;
+        }
+        .login-text {
+            margin-top: 10px;
+        }
+        .login-text a {
+            color: #228B22;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Expense Tracker</h2>
+    <h3>Sign up</h3>
+
+    <div class="input-group">
+        <span>👤</span>
+        <input type="text" id="name" placeholder="Name">
+    </div>
+    <div class="input-group">
+        <span>✉️</span>
+        <input type="email" id="email" placeholder="Email">
+    </div>
+    <div class="input-group">
+        <span>🔒</span>
+        <input type="password" id="password" placeholder="Password">
+    </div>
+
+    <button class="btn" onclick="registerUser()">Sign Up</button>
+
+    <div class="login-text">
+        Already have an account? <a onclick="redirectToLogin()">Login</a>
+    </div>
+
+    <div class="social-login">
+        <button class="facebook">Signup with Facebook</button>
+        <button class="google">Signup with Google</button>
+    </div>
+</div>
+
+<script>
+    function redirectToLogin() {
+        window.location.href = "login.html";
+    }
+
+    function registerUser() {
+        let name = document.getElementById("name").value;
+        let email = document.getElementById("email").value;
+        let password = document.getElementById("password").value;
+
+        if (!name || !email || !password) {
+            alert("Please fill in all fields.");
+            return;
+        }
+
+        localStorage.setItem("userEmail", email);
+        localStorage.setItem("userPassword", password);
+        alert("Signup successful! Redirecting to login...");
+        redirectToLogin();
+    }
+</script>
+
+</body>
+</html>

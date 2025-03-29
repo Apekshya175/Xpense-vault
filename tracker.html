@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Transactions - Expense Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
   </head>
   <body class="bg-blue-200 font-sans">
     <!-- Responsive Navigation Bar -->
@@ -14,20 +16,18 @@
         <div class="flex justify-between items-center h-16">
           <!-- Logo -->
           <div class="flex-shrink-0">
-            <img class="h-8 w-8" src="icons/logo.webp" alt="Logo" />
+            <!-- Adjust the path if your logo is in a subfolder (e.g., images/logo.png) -->
+            <img class="h-10 w-10" src="icons/logo.webp" alt="Logo" />
           </div>
           <!-- Desktop Menu -->
           <div class="hidden md:flex space-x-4">
-            <a href="homepage.php" class="text-gray-700 hover:text-gray-900"
+            <a href="homepage.html" class="text-gray-700 hover:text-gray-900"
               >Homepage</a
             >
-            <a href="aboutus.php" class="text-gray-700 hover:text-gray-900"
+            <a href="aboutus.html" class="text-gray-700 hover:text-gray-900"
               >About Us</a
             >
             <?php if(isset($_SESSION['user_id'])): ?>
-            <a href="profile.php" class="text-gray-700 hover:text-gray-900"
-              >Profile</a
-            >
             <span class="text-gray-700"
               ><?php echo htmlspecialchars($_SESSION['username']); ?></span
             >
@@ -35,8 +35,8 @@
               >Logout</a
             >
             <?php else: ?>
-            <a href="l.php" class="text-blue-800 hover:text-gray-900">Login</a>
-            <a href="s.php" class="text-blue-800 hover:text-gray-900"
+            <a href="l.html" class="text-blue-800 hover:text-gray-900">Login</a>
+            <a href="s.html" class="text-blue-800 hover:text-gray-900"
               >Register</a
             >
             <?php endif; ?>
@@ -67,21 +67,16 @@
       <!-- Mobile Menu -->
       <div class="md:hidden" id="mobile-menu" style="display: none">
         <a
-          href="homepage.php"
+          href="homepage.html"
           class="block px-4 py-2 text-gray-700 hover:bg-gray-200"
           >Homepage</a
         >
         <a
-          href="aboutus.php"
+          href="aboutus.html"
           class="block px-4 py-2 text-gray-700 hover:bg-gray-200"
           >About Us</a
         >
         <?php if(isset($_SESSION['user_id'])): ?>
-        <a
-          href="profile.php"
-          class="block px-4 py-2 text-gray-700 hover:bg-gray-200"
-          >Profile</a
-        >
         <span class="block px-4 py-2 text-gray-700"
           ><?php echo htmlspecialchars($_SESSION['username']); ?></span
         >
@@ -91,10 +86,10 @@
           >Logout</a
         >
         <?php else: ?>
-        <a href="l.php" class="block px-4 py-2 text-blue-800 hover:bg-gray-200"
+        <a href="l.html" class="block px-4 py-2 text-blue-800 hover:bg-gray-200"
           >Login</a
         >
-        <a href="s.php" class="block px-4 py-2 text-blue-800 hover:bg-gray-200"
+        <a href="s.html" class="block px-4 py-2 text-blue-800 hover:bg-gray-200"
           >Register</a
         >
         <?php endif; ?>
@@ -148,69 +143,63 @@
     <div class="ml-0 md:ml-64 p-6 overflow-auto">
       <h1 class="text-3xl font-bold text-gray-800 mb-6">Transactions</h1>
 
-      <!-- Summary Card for Total Budget -->
-      <div class="bg-white p-6 rounded shadow text-center mb-6">
-        <h3 class="font-bold text-gray-700 text-lg">Total Budget</h3>
-        <p id="total-budget" class="text-2xl text-gray-800 mt-2">0</p>
+      <!-- Pie Chart and Summary Section -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- Pie Chart -->
+        <div class="bg-white p-6 rounded shadow">
+          <h2 class="text-xl font-semibold text-gray-700 mb-4">
+            Expenses Breakdown
+          </h2>
+          <canvas id="pieChart" class="w-full h-64"></canvas>
+        </div>
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 gap-4">
+          <div class="bg-white p-6 rounded shadow text-center">
+            <h3 class="font-bold text-gray-700 text-lg">Total Income</h3>
+            <p id="total-income" class="text-2xl text-green-600 mt-2">$0</p>
+          </div>
+          <div class="bg-white p-6 rounded shadow text-center">
+            <h3 class="font-bold text-gray-700 text-lg">Total Saving</h3>
+            <p id="total-saving" class="text-2xl text-blue-600 mt-2">$0</p>
+          </div>
+          <div class="bg-white p-6 rounded shadow text-center">
+            <h3 class="font-bold text-gray-700 text-lg">Total Expense</h3>
+            <p id="total-expense" class="text-2xl text-red-600 mt-2">$0</p>
+          </div>
+          <div class="bg-white p-6 rounded shadow text-center">
+            <h3 class="font-bold text-gray-700 text-lg">Total Budget</h3>
+            <p id="total-budget" class="text-2xl text-gray-800 mt-2">0</p>
+          </div>
+        </div>
       </div>
 
-      <!-- Form Section -->
-      <div class="bg-white p-6 rounded shadow mb-6">
-        <div class="space-y-4">
-          <div class="flex flex-col md:flex-row md:items-center md:space-x-4">
-            <label class="md:w-32 font-bold text-gray-700 text-right"
-              >Category:</label
-            >
-            <select
-              id="type"
-              class="flex-1 p-2 border border-green-600 rounded"
-            >
-              <option value="Income">Income</option>
-              <option value="Saving">Saving</option>
-              <option value="Expense">Expense</option>
-              <option value="Use Saving">Use Saving</option>
-            </select>
-          </div>
-          <div class="flex flex-col md:flex-row md:items-center md:space-x-4">
-            <label class="md:w-32 font-bold text-gray-700 text-right"
-              >Amount:</label
-            >
-            <input
-              type="number"
-              id="amount"
-              placeholder="Enter amount"
-              class="flex-1 p-2 border border-green-600 rounded"
-            />
-          </div>
-          <div
-            id="expense-type-div"
-            class="flex flex-col md:flex-row md:items-center md:space-x-4"
+      <!-- Filter Section -->
+      <div class="bg-white p-4 rounded shadow mb-6">
+        <h2 class="text-xl font-semibold text-gray-700 mb-4">
+          Filter Transactions by Date
+        </h2>
+        <div class="flex flex-col md:flex-row md:items-center md:space-x-4">
+          <label class="md:w-32 font-bold text-gray-700 text-right"
+            >Select Date:</label
           >
-            <label class="md:w-32 font-bold text-gray-700 text-right"
-              >Expense Type:</label
-            >
-            <input
-              type="text"
-              id="expense-type"
-              placeholder="Enter expense type"
-              class="flex-1 p-2 border border-green-600 rounded"
-            />
-          </div>
-          <div class="flex flex-col md:flex-row md:items-center md:space-x-4">
-            <label class="md:w-32 font-bold text-gray-700 text-right"
-              >Date:</label
-            >
-            <input
-              type="date"
-              id="date"
-              class="flex-1 p-2 border border-green-600 rounded"
-            />
-          </div>
+          <input
+            type="date"
+            id="filterDate"
+            class="flex-1 p-2 border border-green-600 rounded"
+          />
+        </div>
+        <div class="flex space-x-4 mt-4">
           <button
-            id="add-transaction-btn"
-            class="w-full bg-green-500 text-white p-2 rounded"
+            id="apply-filter-btn"
+            class="w-full bg-blue-500 text-white p-2 rounded"
           >
-            Add Transaction
+            Apply Filter
+          </button>
+          <button
+            id="clear-filter-btn"
+            class="w-full bg-gray-500 text-white p-2 rounded"
+          >
+            Clear Filter
           </button>
         </div>
       </div>
@@ -229,7 +218,7 @@
               </tr>
             </thead>
             <tbody id="transaction-list">
-              <!-- Transactions will be dynamically loaded via JavaScript -->
+              <!-- Transactions will be dynamically loaded here -->
             </tbody>
             <tfoot>
               <tr class="bg-green-200">
@@ -244,6 +233,6 @@
     </div>
 
     <!-- Load Main JavaScript Module -->
-    <script type="module" src="jsfile/transaction.js"></script>
+    <script type="module" src="jsfile/tracker.js"></script>
   </body>
 </html>
