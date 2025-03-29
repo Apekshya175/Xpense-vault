@@ -1,8 +1,6 @@
-// js/main.js
+// tracker.js - Specific to tracker.html
 
 let transactions = [];
-let filteredTransactions = [];
-let chart;
 
 document.addEventListener("DOMContentLoaded", () => {
   // Mobile Menu Toggle
@@ -66,15 +64,16 @@ document.addEventListener("DOMContentLoaded", () => {
       fetch("api.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type, amount, expenseType, date }),
+        body: JSON.stringify({ type, amount, expenseType: "food", date }),
       })
         .then((res) => res.json())
         .then((data) => {
+          console.log(data);
           if (data.message) {
             alert(data.message);
             fetchTransactions();
           } else {
-            alert(data.error || "Error adding transaction");
+            alert(data.error || "Error adding");
           }
         })
         .catch((err) => console.error("Error adding transaction:", err));
@@ -107,22 +106,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Filter Functionality
-  const applyFilterBtn = document.getElementById("apply-filter-btn");
-  const clearFilterBtn = document.getElementById("clear-filter-btn");
-  if (applyFilterBtn) {
-    applyFilterBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      applyFilter();
-    });
-  }
-  if (clearFilterBtn) {
-    clearFilterBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      clearFilter();
-    });
-  }
-
   // --- Data and UI Functions ---
 
   function getTotalIncome() {
@@ -147,57 +130,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalIncome = getTotalIncome();
     const totalExpense = getTotalExpense();
     const totalSaving = getTotalSaving();
-    const incomeElem = document.getElementById("total-income");
-    const expenseElem = document.getElementById("total-expense");
-    const savingElem = document.getElementById("total-saving");
     const totalBudgetElem = document.getElementById("total-budget");
-    if (incomeElem) incomeElem.textContent = `$${totalIncome}`;
-    if (expenseElem) expenseElem.textContent = `$${totalExpense}`;
-    if (savingElem) savingElem.textContent = `$${totalSaving}`;
-    if (totalBudgetElem)
-      totalBudgetElem.textContent = `$${
-        totalIncome - totalExpense - totalSaving
-      }`;
-  }
+    const totalBudgetElemtable = document.getElementById("total-budget-table");
 
-  function generateChart() {
-    const pieChartCanvas = document.getElementById("pieChart");
-    if (!pieChartCanvas) return;
-    const categories = ["Income", "Saving", "Expense"];
-    let amounts = [0, 0, 0];
-    filteredTransactions.forEach((tx) => {
-      if (tx.type === "Income") amounts[0] += parseFloat(tx.amount);
-      else if (tx.type === "Saving") amounts[1] += parseFloat(tx.amount);
-      else if (tx.type === "Expense") amounts[2] += parseFloat(tx.amount);
-    });
-    if (chart) chart.destroy();
-    chart = new Chart(pieChartCanvas, {
-      type: "pie",
-      data: {
-        labels: categories,
-        datasets: [
-          {
-            data: amounts,
-            backgroundColor: ["#4CAF50", "#2196F3", "#F44336"],
-          },
-        ],
-      },
-      options: {
-        plugins: {
-          datalabels: {
-            color: "#fff",
-            font: { weight: "bold" },
-            formatter: (value) => `$${value}`,
-          },
-        },
-      },
-    });
+    const totalbudget = totalIncome - totalExpense - totalSaving;
+    if (totalBudgetElem) {
+      totalBudgetElem.textContent = `$${totalbudget}`;
+    }
+    if (totalBudgetElemtable) {
+      totalBudgetElemtable.textContent = `$${totalbudget}`;
+    }
   }
 
   function renderTransactions() {
     if (!transactionList) return;
     transactionList.innerHTML = "";
-    filteredTransactions.forEach((tx) => {
+    transactions.forEach((tx) => {
       const row = document.createElement("tr");
       row.innerHTML = `
         <td class="py-2 px-4 border">${tx.type}</td>
@@ -218,36 +166,10 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((data) => {
         console.log("Fetched transactions:", data);
         transactions = data;
-        filteredTransactions = [...transactions];
         renderTransactions();
         updateSummary();
-        generateChart();
       })
       .catch((err) => console.error("Error fetching transactions:", err));
-  }
-
-  function applyFilter() {
-    const filterDateInput = document.getElementById("filterDate");
-    const filterDate = filterDateInput.value;
-    if (filterDate) {
-      filteredTransactions = transactions.filter(
-        (tx) => tx.date === filterDate
-      );
-    } else {
-      filteredTransactions = [...transactions];
-    }
-    renderTransactions();
-    updateSummary();
-    generateChart();
-  }
-
-  function clearFilter() {
-    const filterDateInput = document.getElementById("filterDate");
-    filterDateInput.value = "";
-    filteredTransactions = [...transactions];
-    renderTransactions();
-    updateSummary();
-    generateChart();
   }
 
   // Initial load of transactions
