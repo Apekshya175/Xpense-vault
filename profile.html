@@ -103,7 +103,7 @@
 
         // Fetch user data when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            fetch('profile.php?action=get_user_data')
+            fetch('settings.php?action=get_user_data')
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -129,7 +129,7 @@
                 formData.append('current_password', '');
             }
             
-            fetch('profile.php?action=update_profile', {
+            fetch('settings.php?action=update_profile', {
                 method: 'POST',
                 body: formData
             })
