@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password</title>
+</head>
+<body>
+    <h2>Reset Your Password</h2>
+    <form id="resetForm">
+        <input type="hidden" id="token" name="token"> <!-- Token from URL -->
+        <label for="password">New Password:</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">Reset Password</button>
+    </form>
+
+    <script>
+        // Extract token from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+
+        if (!token) {
+            alert("Invalid or missing token!");
+        } else {
+            document.getElementById("token").value = token;
+        }
+
+        document.getElementById("resetForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const password = document.getElementById("password").value;
+
+            fetch("reset_password.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `token=${token}&password=${password}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                if (data.status === "success") {
+                    window.location.href = "login.php"; // Redirect after success
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+</body>
+</html>
