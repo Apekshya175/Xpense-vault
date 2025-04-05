@@ -1,0 +1,183 @@
+<?php session_start(); ?>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saving Goals - Expense Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body class="font-['Inter'] bg-gradient-to-br from-indigo-50 to-blue-50 min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md shadow-lg">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between items-center h-24">
+          <div class="flex items-center -ml-6">
+            <img class="h-24 w-24 object-contain" src="images/logo.png" alt="Xpense Vault Logo" />
+          </div>
+          <div class="hidden md:flex space-x-8">
+            <a href="dashboard.html" class="relative text-gray-700 hover:text-blue-600 font-medium after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-0 after:h-[2px] after:bg-blue-500 after:transition-all after:duration-300 hover:after:w-full">Dashboard</a>
+            <a href="transactions.html" class="relative text-gray-700 hover:text-blue-600 font-medium after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-0 after:h-[2px] after:bg-blue-500 after:transition-all after:duration-300 hover:after:w-full">Transactions</a>
+            <a href="goals.php" class="relative text-blue-600 font-medium after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[2px] after:bg-blue-500">Saving Goals</a>
+            <a href="charts.html" class="relative text-gray-700 hover:text-blue-600 font-medium after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-0 after:h-[2px] after:bg-blue-500 after:transition-all after:duration-300 hover:after:w-full">Charts</a>
+            <a href="settings.html" class="relative text-gray-700 hover:text-blue-600 font-medium after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-0 after:h-[2px] after:bg-blue-500 after:transition-all after:duration-300 hover:after:w-full">Settings</a>
+          </div>
+          <div class="md:hidden">
+            <button id="mobile-menu-button" class="text-gray-700 hover:text-blue-600 focus:outline-none">
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Mobile Menu -->
+      <div class="md:hidden" id="mobile-menu" style="display: none">
+        <div class="px-2 pt-2 pb-3 space-y-1">
+          <a href="dashboard.html" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50">Dashboard</a>
+          <a href="transactions.html" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50">Transactions</a>
+          <a href="goals.php" class="block px-3 py-2 rounded-md text-blue-600 bg-blue-50">Saving Goals</a>
+          <a href="charts.html" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50">Charts</a>
+          <a href="settings.html" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50">Settings</a>
+          <a href="logout.php" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50">Logout</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="bg-white/80 backdrop-blur-md shadow-lg w-64 fixed h-[calc(100%-6rem)] top-24 transform transition-transform duration-300 md:translate-x-0 -translate-x-full z-20">
+      <div class="flex items-center justify-between p-4 border-b">
+        <h2 class="text-xl font-bold text-gray-800">Menu</h2>
+        <button id="sidebar-close-btn" class="text-gray-500 hover:text-gray-700 focus:outline-none md:hidden">
+          ✖
+        </button>
+      </div>
+      <nav class="mt-4">
+        <ul>
+          <li>
+            <a href="dashboard.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+              <!-- SVG Icon -->
+              Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="transactions.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+              <!-- SVG Icon -->
+              Transactions
+            </a>
+          </li>
+          <li>
+            <a href="goals.php" class="flex items-center px-4 py-3 text-blue-600 bg-blue-50">
+              <!-- SVG Icon -->
+              Saving Goals
+            </a>
+          </li>
+          <li>
+            <a href="charts.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+              <!-- SVG Icon -->
+              Charts
+            </a>
+          </li>
+          <li>
+            <a href="settings.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+              <!-- SVG Icon -->
+              Settings
+            </a>
+          </li>
+          <li>
+            <a href="logout.php" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+              <!-- SVG Icon -->
+              Logout
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Sidebar Toggle Button -->
+    <button id="mobile-menu-btn" class="fixed top-20 left-3 z-30 md:hidden text-gray-700 text-xl hover:text-blue-600 transition-all duration-200 hover:scale-110">
+      ☰
+    </button>
+
+    <!-- Main Content Area -->
+    <div class="ml-0 md:ml-64 p-6 pt-28">
+      <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">Saving Goals</h1>
+
+        <!-- Summary Card for Total Savings -->
+        <div class="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 mb-8">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-semibold text-gray-600 mb-1">Total Savings</h3>
+              <p id="total-savings" class="text-3xl font-bold text-gray-800">0</p>
+            </div>
+            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Section for Adding a New Saving Goal -->
+        <div class="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 mb-8">
+          <div class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Goal Name</label>
+                <input type="text" id="goal-name" placeholder="e.g. Vacation Fund" class="w-full p-3 border border-gray-200 rounded-xl transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
+              </div>
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Target Amount</label>
+                <input type="number" id="target-amount" placeholder="Enter target amount" class="w-full p-3 border border-gray-200 rounded-xl transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
+              </div>
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Deadline</label>
+                <input type="date" id="deadline" class="w-full p-3 border border-gray-200 rounded-xl transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
+              </div>
+            </div>
+            <button id="add-goal-btn" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white p-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
+              Add Saving Goal
+            </button>
+          </div>
+        </div>
+
+        <!-- Goals Table -->
+        <div class="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="bg-gradient-to-r from-blue-600 to-blue-700">
+                  <th class="py-4 px-6 text-left text-white font-semibold">Goal Name</th>
+                  <th class="py-4 px-6 text-left text-white font-semibold">Target</th>
+                  <th class="py-4 px-6 text-left text-white font-semibold">Saved</th>
+                  <th class="py-4 px-6 text-left text-white font-semibold">Deadline</th>
+                  <th class="py-4 px-6 text-left text-white font-semibold">Delete</th>
+                </tr>
+              </thead>
+              <tbody id="goal-list" class="divide-y divide-gray-100">
+                <!-- Dynamic rows will be inserted here -->
+              </tbody>
+              <tfoot>
+                <tr class="bg-blue-50">
+                  <td colspan="5" class="py-4 px-6 font-bold text-gray-800">
+                    Total Savings: <span id="total-savings-table" class="text-blue-600">0</span>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast" class="fixed inset-0 flex items-center justify-center pointer-events-none">
+      <div class="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg opacity-0 transition-opacity duration-500"></div>
+    </div>
+
+    <!-- Load Main JavaScript Module -->
+    <script src="goals.js"></script>
+  </body>
+</html>

@@ -116,9 +116,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (totalBudgetElem) {
       totalBudgetElem.textContent = `$${totalbudget}`;
     }
-    if (totalBudgetElemtable) {
-      totalBudgetElemtable.textContent = `$${totalbudget}`;
+    const savings= totalIncome-totalExpense;
+    if(savingElem)
+    {
+      savingElem.textContent = `$${savings}`;
     }
+
   }
 
   function generateChart() {
