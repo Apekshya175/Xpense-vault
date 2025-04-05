@@ -6,17 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Transactions - Expense Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js and datalabels plugin -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
   </head>
   <body class="bg-blue-200 font-sans">
-    <!-- Responsive Navigation Bar -->
+    <!-- ---------------- Responsive Navigation Bar ---------------- -->
     <nav class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
       <div class="max-w-7xl mx-auto px-4">
         <div class="flex justify-between items-center h-16">
           <!-- Logo -->
           <div class="flex-shrink-0">
-            <!-- Adjust the path if your logo is in a subfolder (e.g., images/logo.png) -->
             <img class="h-10 w-10" src="icons/logo.webp" alt="Logo" />
           </div>
           <!-- Desktop Menu -->
@@ -96,7 +96,7 @@
       </div>
     </nav>
 
-    <!-- Sidebar Toggle Button -->
+    <!-- ---------------- Sidebar Toggle Button ---------------- -->
     <button
       id="mobile-menu-btn"
       class="fixed top-20 left-4 z-30 md:hidden text-gray-700 text-2xl"
@@ -104,7 +104,7 @@
       ☰
     </button>
 
-    <!-- Sidebar -->
+    <!-- ---------------- Sidebar ---------------- -->
     <div
       id="sidebar"
       class="bg-white shadow-md w-64 fixed h-full transform transition-transform duration-300 md:translate-x-0 -translate-x-full z-20"
@@ -139,19 +139,30 @@
       </nav>
     </div>
 
-    <!-- Main Content Area -->
+    <!-- ---------------- Main Content Area ---------------- -->
     <div class="ml-0 md:ml-64 p-6 overflow-auto">
       <h1 class="text-3xl font-bold text-gray-800 mb-6">Transactions</h1>
 
-      <!-- Pie Chart and Summary Section -->
+      <!-- ---------------- Charts and Summary Section ---------------- -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <!-- Pie Chart -->
+        <!-- Expense Breakdown Pie Chart -->
         <div class="bg-white p-6 rounded shadow">
           <h2 class="text-xl font-semibold text-gray-700 mb-4">
             Expenses Breakdown
           </h2>
           <canvas id="pieChart" class="w-full h-64"></canvas>
         </div>
+        <!-- Monthly Saved Amount Card -->
+        <div
+          class="bg-white p-6 rounded shadow flex flex-col justify-center items-center"
+        >
+          <h2 class="text-xl font-semibold text-gray-700 mb-4">
+            Monthly Saved Amount
+          </h2>
+          <p id="monthly-saving-amount" class="text-3xl text-green-600">$0</p>
+          <p class="mt-2 text-sm text-gray-600">Total Income - Total Expense</p>
+        </div>
+
         <!-- Summary Cards -->
         <div class="grid grid-cols-1 gap-4">
           <div class="bg-white p-6 rounded shadow text-center">
@@ -168,19 +179,19 @@
           </div>
           <div class="bg-white p-6 rounded shadow text-center">
             <h3 class="font-bold text-gray-700 text-lg">Total Budget</h3>
-            <p id="total-budget" class="text-2xl text-gray-800 mt-2">0</p>
+            <p id="total-budget" class="text-2xl text-gray-800 mt-2">$0</p>
           </div>
         </div>
       </div>
 
-      <!-- Filter Section -->
+      <!-- ---------------- Filter Section ---------------- -->
       <div class="bg-white p-4 rounded shadow mb-6">
         <h2 class="text-xl font-semibold text-gray-700 mb-4">
-          Filter Transactions by Date
+          Filter Transactions by Month
         </h2>
         <div class="flex flex-col md:flex-row md:items-center md:space-x-4">
           <label class="md:w-32 font-bold text-gray-700 text-right"
-            >Select Date:</label
+            >Select Month:</label
           >
           <input
             type="date"
@@ -204,7 +215,7 @@
         </div>
       </div>
 
-      <!-- Transactions Table -->
+      <!-- ---------------- Transactions Table ---------------- -->
       <div class="bg-white p-6 rounded shadow">
         <div class="overflow-x-auto">
           <table class="w-full text-center border-collapse">
@@ -223,7 +234,7 @@
             <tfoot>
               <tr class="bg-green-200">
                 <td colspan="5" class="py-2 px-4 border font-bold">
-                  Total Budget: <span id="total-budget-table">0</span>
+                  Total Budget: <span id="total-budget-table">$0</span>
                 </td>
               </tr>
             </tfoot>

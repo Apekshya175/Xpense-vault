@@ -53,13 +53,33 @@ document.addEventListener("DOMContentLoaded", () => {
     addTransactionBtn.addEventListener("click", (e) => {
       e.preventDefault();
       const type = document.getElementById("type").value;
-      const amount = document.getElementById("amount").value;
+      const amount = parseFloat(document.getElementById("amount").value);
       const expenseType = document.getElementById("expense-type").value;
       const date = document.getElementById("date").value;
+
       if (!amount || !date) {
         alert("Please provide a valid amount and date.");
         return;
       }
+
+      const totalIncome = getTotalIncome();
+      const totalExpense = getTotalExpense();
+      const totalSaving = getTotalSaving();
+      const availableBalance = totalIncome - totalExpense - totalSaving;
+
+      if (type === "Expense" && amount > availableBalance) {
+        alert(
+          "Not enough balance. Your current available balance is $" +
+            availableBalance.toFixed(2)
+        );
+        return;
+      }
+
+      if (availableBalance <= 0 && type === "Expense") {
+        alert("You have 0 balance. Cannot add this expense.");
+        return;
+      }
+
       // API call to add a transaction
       fetch("api.php", {
         method: "POST",
@@ -134,11 +154,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalBudgetElemtable = document.getElementById("total-budget-table");
 
     const totalbudget = totalIncome - totalExpense - totalSaving;
+
     if (totalBudgetElem) {
-      totalBudgetElem.textContent = `$${totalbudget}`;
+      totalBudgetElem.textContent = `$${totalbudget.toFixed(2)}`;
     }
     if (totalBudgetElemtable) {
-      totalBudgetElemtable.textContent = `$${totalbudget}`;
+      totalBudgetElemtable.textContent = `$${totalbudget.toFixed(2)}`;
     }
   }
 
