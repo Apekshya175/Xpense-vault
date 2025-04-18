@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
         renderCategoryChart();
     }
 
-    // Time series chart (smaller version)
+    // Time series chart
     function renderTimeSeriesChart() {
         const ctx = document.getElementById("timeSeriesChart").getContext("2d");
         
