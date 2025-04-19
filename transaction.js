@@ -45,6 +45,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Toggle Expense Type Field based on Category selection
+if (typeSelect && expenseTypeDiv) {
+  // Immediately hide on page load (default state)
+  expenseTypeDiv.style.display = "none";
+  
+  // Show only when Expense is selected
+  typeSelect.addEventListener("change", () => {
+    if (typeSelect.value === "Expense") {
+      expenseTypeDiv.style.display = "block"; 
+    } else {
+      expenseTypeDiv.style.display = "none";
+    }
+  });
+}
+
   // Add Transaction Event Listener
   const addTransactionBtn = document.getElementById("add-transaction-btn");
   if (addTransactionBtn) {
@@ -70,6 +85,17 @@ document.addEventListener("DOMContentLoaded", () => {
           if (data.message) {
             alert(data.message);
             fetchTransactions();
+
+            // Reset the form
+            const form = document.querySelector('form');
+            if (form) {
+              form.reset();
+            }
+            // Hide the expense type field
+            if (expenseTypeDiv) {
+              expenseTypeDiv.style.display = 'none';
+            }
+
           } else {
             alert(data.error || "Error adding");
           }
