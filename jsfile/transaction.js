@@ -1,8 +1,6 @@
-// transactions.js - Specific to transactions.html
+// tracker.js - Specific to tracker.html
 
 let transactions = [];
-let filteredTransactions = [];
-let chart;
 
 document.addEventListener("DOMContentLoaded", () => {
   // Mobile Menu Toggle
@@ -36,24 +34,74 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Filter Functionality
-  const applyFilterBtn = document.getElementById("apply-filter-btn");
-  const clearFilterBtn = document.getElementById("clear-filter-btn");
-  if (applyFilterBtn) {
-    applyFilterBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      applyFilter();
+  // Toggle Expense Type Field based on Category selection
+  const typeSelect = document.getElementById("type");
+  const expenseTypeDiv = document.getElementById("expense-type-div");
+  if (typeSelect && expenseTypeDiv) {
+    typeSelect.addEventListener("change", () => {
+      if (typeSelect.value === "Expense" || typeSelect.value === "Use Saving") {
+        expenseTypeDiv.style.display = "flex";
+      } else {
+        expenseTypeDiv.style.display = "none";
+      }
     });
   }
-  if (clearFilterBtn) {
-    clearFilterBtn.addEventListener("click", (e) => {
+
+  // Add Transaction Event Listener
+  const addTransactionBtn = document.getElementById("add-transaction-btn");
+  if (addTransactionBtn) {
+    addTransactionBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      clearFilter();
+      const type = document.getElementById("type").value;
+      const amount = parseFloat(document.getElementById("amount").value);
+      const expenseType = document.getElementById("expense-type").value;
+      const date = document.getElementById("date").value;
+
+      if (!amount || !date) {
+        alert("Please provide a valid amount and date.");
+        return;
+      }
+
+      const totalIncome = getTotalIncome();
+      const totalExpense = getTotalExpense();
+      const totalSaving = getTotalSaving();
+      const availableBalance = totalIncome - totalExpense - totalSaving;
+
+      if (type === "Expense" && amount > availableBalance) {
+        alert(
+          "Not enough balance. Your current available balance is $" +
+            availableBalance.toFixed(2)
+        );
+        return;
+      }
+
+      if (availableBalance <= 0 && type === "Expense") {
+        alert("You have 0 balance. Cannot add this expense.");
+        return;
+      }
+
+      // API call to add a transaction
+      fetch("api.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type, amount, expenseType, date }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          if (data.message) {
+            alert(data.message);
+            fetchTransactions();
+          } else {
+            alert(data.error || "Error adding");
+          }
+        })
+        .catch((err) => console.error("Error adding transaction:", err));
     });
   }
 
   // Delete Transaction via event delegation
-  const transactionList = document.getElementById("transactions-table-body");
+  const transactionList = document.getElementById("transaction-list");
   if (transactionList) {
     transactionList.addEventListener("click", (e) => {
       if (e.target && e.target.classList.contains("delete-btn")) {
@@ -102,66 +150,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalIncome = getTotalIncome();
     const totalExpense = getTotalExpense();
     const totalSaving = getTotalSaving();
-    const incomeElem = document.getElementById("total-income");
-    const expenseElem = document.getElementById("total-expense");
-    const savingElem = document.getElementById("total-saving");
     const totalBudgetElem = document.getElementById("total-budget");
     const totalBudgetElemtable = document.getElementById("total-budget-table");
 
-    if (incomeElem) incomeElem.textContent = `Rs.${totalIncome}`;
-    if (expenseElem) expenseElem.textContent = `Rs.${totalExpense}`;
-    if (savingElem) savingElem.textContent = `Rs.${totalSaving}`;
-
     const totalbudget = totalIncome - totalExpense - totalSaving;
+
     if (totalBudgetElem) {
-      totalBudgetElem.textContent = `Rs.${totalbudget}`;
+      totalBudgetElem.textContent = `$${totalbudget.toFixed(2)}`;
     }
-    const savings= totalIncome-totalExpense;
-    if(savingElem)
-    {
-      savingElem.textContent = `Rs.${savings}`;
+    if (totalBudgetElemtable) {
+      totalBudgetElemtable.textContent = `$${totalbudget.toFixed(2)}`;
     }
-
-  }
-
-  function generateChart() {
-    const pieChartCanvas = document.getElementById("pieChart");
-    if (!pieChartCanvas) return;
-    const categories = ["Income", "Saving", "Expense"];
-    let amounts = [0, 0, 0];
-    filteredTransactions.forEach((tx) => {
-      if (tx.type === "Income") amounts[0] += parseFloat(tx.amount);
-      else if (tx.type === "Saving") amounts[1] += parseFloat(tx.amount);
-      else if (tx.type === "Expense") amounts[2] += parseFloat(tx.amount);
-    });
-    if (chart) chart.destroy();
-    chart = new Chart(pieChartCanvas, {
-      type: "pie",
-      data: {
-        labels: categories,
-        datasets: [
-          {
-            data: amounts,
-            backgroundColor: ["#4CAF50", "#2196F3", "#F44336"],
-          },
-        ],
-      },
-      options: {
-        plugins: {
-          datalabels: {
-            color: "#fff",
-            font: { weight: "bold" },
-            formatter: (value) => `$${value}`,
-          },
-        },
-      },
-    });
   }
 
   function renderTransactions() {
     if (!transactionList) return;
     transactionList.innerHTML = "";
-    filteredTransactions.forEach((tx) => {
+    transactions.forEach((tx) => {
       const row = document.createElement("tr");
       row.innerHTML = `
         <td class="py-2 px-4 border">${tx.type}</td>
@@ -182,36 +187,10 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((data) => {
         console.log("Fetched transactions:", data);
         transactions = data;
-        filteredTransactions = [...transactions];
         renderTransactions();
         updateSummary();
-        generateChart();
       })
       .catch((err) => console.error("Error fetching transactions:", err));
-  }
-
-  function applyFilter() {
-    const filterDateInput = document.getElementById("filterDate");
-    const filterDate = filterDateInput.value;
-    if (filterDate) {
-      filteredTransactions = transactions.filter(
-        (tx) => tx.date === filterDate
-      );
-    } else {
-      filteredTransactions = [...transactions];
-    }
-    renderTransactions();
-    updateSummary();
-    generateChart();
-  }
-
-  function clearFilter() {
-    const filterDateInput = document.getElementById("filterDate");
-    filterDateInput.value = "";
-    filteredTransactions = [...transactions];
-    renderTransactions();
-    updateSummary();
-    generateChart();
   }
 
   // Initial load of transactions

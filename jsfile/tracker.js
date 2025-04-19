@@ -2,10 +2,10 @@
 
 let transactions = [];
 let filteredTransactions = [];
-let chart;
+let expensePieChart;
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Mobile Menu Toggle
+  // ---------------- Mobile Menu Toggle ----------------
   const mobileMenuButton = document.getElementById("mobile-menu-button");
   const mobileMenu = document.getElementById("mobile-menu");
   if (mobileMenuButton && mobileMenu) {
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Sidebar Toggle (using dedicated buttons)
+  // ---------------- Sidebar Toggle ----------------
   const sidebarToggleBtn = document.getElementById("mobile-menu-btn");
   const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
   const sidebar = document.getElementById("sidebar");
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Filter Functionality
+  // ---------------- Filter Functionality ----------------
   const applyFilterBtn = document.getElementById("apply-filter-btn");
   const clearFilterBtn = document.getElementById("clear-filter-btn");
   if (applyFilterBtn) {
@@ -52,8 +52,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Delete Transaction via event delegation
-  const transactionList = document.getElementById("transactions-table-body");
+  // ---------------- Delete Transaction via Event Delegation ----------------
+  const transactionList = document.getElementById("transaction-list");
   if (transactionList) {
     transactionList.addEventListener("click", (e) => {
       if (e.target && e.target.classList.contains("delete-btn")) {
@@ -78,8 +78,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- Data and UI Functions ---
+  // ---------------- Data and UI Functions ----------------
 
+  // Calculate Totals
   function getTotalIncome() {
     return transactions
       .filter((tx) => tx.type === "Income")
@@ -98,44 +99,58 @@ document.addEventListener("DOMContentLoaded", () => {
       .reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
   }
 
+  // Update Summary and Charts
   function updateSummary() {
     const totalIncome = getTotalIncome();
     const totalExpense = getTotalExpense();
     const totalSaving = getTotalSaving();
+
     const incomeElem = document.getElementById("total-income");
     const expenseElem = document.getElementById("total-expense");
     const savingElem = document.getElementById("total-saving");
     const totalBudgetElem = document.getElementById("total-budget");
     const totalBudgetElemtable = document.getElementById("total-budget-table");
 
-    if (incomeElem) incomeElem.textContent = `Rs.${totalIncome}`;
-    if (expenseElem) expenseElem.textContent = `Rs.${totalExpense}`;
-    if (savingElem) savingElem.textContent = `Rs.${totalSaving}`;
+    if (incomeElem) incomeElem.textContent = `$${totalIncome}`;
+    if (expenseElem) expenseElem.textContent = `$${totalExpense}`;
+    if (savingElem) savingElem.textContent = `$${totalSaving}`;
 
-    const totalbudget = totalIncome - totalExpense - totalSaving;
-    if (totalBudgetElem) {
-      totalBudgetElem.textContent = `Rs.${totalbudget}`;
-    }
-    const savings= totalIncome-totalExpense;
-    if(savingElem)
-    {
-      savingElem.textContent = `Rs.${savings}`;
+    // Total Budget remains as income - expense - saving
+    const totalBudget = totalIncome - totalExpense - totalSaving;
+    if (totalBudgetElem) totalBudgetElem.textContent = `$${totalBudget}`;
+    if (totalBudgetElemtable)
+      totalBudgetElemtable.textContent = `$${totalBudget}`;
+
+    // Update the monthly saved amount (Income - Expense)
+    const monthlySavingAmountElem = document.getElementById(
+      "monthly-saving-amount"
+    );
+    if (monthlySavingAmountElem) {
+      const monthlySaving = totalIncome - totalExpense;
+      monthlySavingAmountElem.textContent = `$${monthlySaving}`;
     }
 
+    // Update the expense breakdown pie chart
+    generateExpensePieChart();
   }
 
-  function generateChart() {
+  // Generate Expense Breakdown Pie Chart
+  function generateExpensePieChart() {
     const pieChartCanvas = document.getElementById("pieChart");
     if (!pieChartCanvas) return;
+
     const categories = ["Income", "Saving", "Expense"];
     let amounts = [0, 0, 0];
+
     filteredTransactions.forEach((tx) => {
       if (tx.type === "Income") amounts[0] += parseFloat(tx.amount);
       else if (tx.type === "Saving") amounts[1] += parseFloat(tx.amount);
       else if (tx.type === "Expense") amounts[2] += parseFloat(tx.amount);
     });
-    if (chart) chart.destroy();
-    chart = new Chart(pieChartCanvas, {
+
+    if (expensePieChart) expensePieChart.destroy();
+
+    expensePieChart = new Chart(pieChartCanvas, {
       type: "pie",
       data: {
         labels: categories,
@@ -158,6 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Render Transactions in the Table
   function renderTransactions() {
     if (!transactionList) return;
     transactionList.innerHTML = "";
@@ -176,44 +192,50 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Fetch Transactions from API
   function fetchTransactions() {
     fetch("api.php")
       .then((res) => res.json())
       .then((data) => {
         console.log("Fetched transactions:", data);
         transactions = data;
+        // Initially, show all transactions
         filteredTransactions = [...transactions];
         renderTransactions();
         updateSummary();
-        generateChart();
       })
       .catch((err) => console.error("Error fetching transactions:", err));
   }
 
+  // Apply Month Filter (filter by month and year)
   function applyFilter() {
     const filterDateInput = document.getElementById("filterDate");
     const filterDate = filterDateInput.value;
     if (filterDate) {
-      filteredTransactions = transactions.filter(
-        (tx) => tx.date === filterDate
-      );
+      const selectedDate = new Date(filterDate);
+      filteredTransactions = transactions.filter((tx) => {
+        const txDate = new Date(tx.date);
+        return (
+          txDate.getMonth() === selectedDate.getMonth() &&
+          txDate.getFullYear() === selectedDate.getFullYear()
+        );
+      });
     } else {
       filteredTransactions = [...transactions];
     }
     renderTransactions();
     updateSummary();
-    generateChart();
   }
 
+  // Clear Filter
   function clearFilter() {
     const filterDateInput = document.getElementById("filterDate");
     filterDateInput.value = "";
     filteredTransactions = [...transactions];
     renderTransactions();
     updateSummary();
-    generateChart();
   }
 
-  // Initial load of transactions
+  // ---------------- Initial Data Load ----------------
   fetchTransactions();
 });
