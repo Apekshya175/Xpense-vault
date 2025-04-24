@@ -16,13 +16,15 @@
           <div class="flex items-center -ml-6">
             <img class="h-24 w-24 object-contain" src="images/logo.png" alt="Xpense Vault Logo" />
           </div>
+          
           <div class="hidden md:flex space-x-8">
             <a href="dashboard.html" class="relative text-gray-700 hover:text-blue-600 font-medium after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-0 after:h-[2px] after:bg-blue-500 after:transition-all after:duration-300 hover:after:w-full">Dashboard</a>
             <a href="transactions.html" class="relative text-gray-700 hover:text-blue-600 font-medium after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-0 after:h-[2px] after:bg-blue-500 after:transition-all after:duration-300 hover:after:w-full">Transactions</a>
-            <a href="goals.php" class="relative text-blue-600 font-medium after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[2px] after:bg-blue-500">Saving Goals</a>
+            <a href="Savinggoals.html" class="relative text-blue-600 font-medium after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[2px] after:bg-blue-500">Set Goals</a>
             <a href="charts.html" class="relative text-gray-700 hover:text-blue-600 font-medium after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-0 after:h-[2px] after:bg-blue-500 after:transition-all after:duration-300 hover:after:w-full">Charts</a>
             <a href="settings.html" class="relative text-gray-700 hover:text-blue-600 font-medium after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-0 after:h-[2px] after:bg-blue-500 after:transition-all after:duration-300 hover:after:w-full">Settings</a>
           </div>
+
           <div class="md:hidden">
             <button id="mobile-menu-button" class="text-gray-700 hover:text-blue-600 focus:outline-none">
               <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,12 +34,13 @@
           </div>
         </div>
       </div>
+
       <!-- Mobile Menu -->
       <div class="md:hidden" id="mobile-menu" style="display: none">
         <div class="px-2 pt-2 pb-3 space-y-1">
           <a href="dashboard.html" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50">Dashboard</a>
           <a href="transactions.html" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50">Transactions</a>
-          <a href="goals.php" class="block px-3 py-2 rounded-md text-blue-600 bg-blue-50">Saving Goals</a>
+          <a href="Savinggoals.html" class="block px-3 py-2 rounded-md text-blue-600 bg-blue-50">Set Goals</a>
           <a href="charts.html" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50">Charts</a>
           <a href="settings.html" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50">Settings</a>
           <a href="logout.php" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50">Logout</a>
@@ -57,37 +60,50 @@
         <ul>
           <li>
             <a href="dashboard.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-              <!-- SVG Icon -->
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
               Dashboard
             </a>
           </li>
           <li>
             <a href="transactions.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-              <!-- SVG Icon -->
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
               Transactions
             </a>
           </li>
           <li>
-            <a href="goals.php" class="flex items-center px-4 py-3 text-blue-600 bg-blue-50">
-              <!-- SVG Icon -->
-              Saving Goals
+            <a href="Savinggoals.html" class="flex items-center px-4 py-3 text-blue-600 bg-blue-50">
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              Set Goals
             </a>
           </li>
           <li>
             <a href="charts.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-              <!-- SVG Icon -->
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
               Charts
             </a>
           </li>
           <li>
             <a href="settings.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-              <!-- SVG Icon -->
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
               Settings
             </a>
           </li>
           <li>
             <a href="logout.php" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-              <!-- SVG Icon -->
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
               Logout
             </a>
           </li>
@@ -110,7 +126,7 @@
           <div class="flex items-center justify-between">
             <div>
               <h3 class="font-semibold text-gray-600 mb-1">Total Savings</h3>
-              <p id="total-saving" class="text-3xl font-bold text-gray-800">0</p>
+              <p id="total-savings" class="text-3xl font-bold text-gray-800">$0.00</p>
             </div>
             <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
               <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -120,23 +136,29 @@
           </div>
         </div>
 
-        <!-- Form Section for Adding a New Saving Goal -->
+        <!-- Form Section -->
         <div class="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 mb-8">
           <div class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Goal Name Input -->
               <div class="space-y-2">
                 <label class="block text-sm font-medium text-gray-700">Goal Name</label>
                 <input type="text" id="goal-name" placeholder="e.g. Vacation Fund" class="w-full p-3 border border-gray-200 rounded-xl transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
               </div>
+              
+              <!-- Target Amount Input -->
               <div class="space-y-2">
                 <label class="block text-sm font-medium text-gray-700">Target Amount</label>
                 <input type="number" id="target-amount" placeholder="Enter target amount" class="w-full p-3 border border-gray-200 rounded-xl transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
               </div>
+              
+              <!-- Deadline Input -->
               <div class="space-y-2">
                 <label class="block text-sm font-medium text-gray-700">Deadline</label>
                 <input type="date" id="deadline" class="w-full p-3 border border-gray-200 rounded-xl transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
               </div>
             </div>
+            
             <button id="add-goal-btn" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white p-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
               Add Saving Goal
             </button>
@@ -157,12 +179,14 @@
                 </tr>
               </thead>
               <tbody id="goal-list" class="divide-y divide-gray-100">
-                <!-- Dynamic rows will be inserted here -->
+                <!-- Table rows will be added dynamically with these classes -->
+                <!-- Each row will have: transition-all duration-300 hover:bg-blue-50/50 group -->
+                <!-- Delete button will have: transition-all duration-300 group-hover:bg-red-50 group-hover:text-red-600 -->
               </tbody>
               <tfoot>
                 <tr class="bg-blue-50">
                   <td colspan="5" class="py-4 px-6 font-bold text-gray-800">
-                    Total Savings: <span id="total-savings-table" class="text-blue-600">0</span>
+                    Total Savings: <span id="total-savings-table" class="text-blue-600">$0.00</span>
                   </td>
                 </tr>
               </tfoot>
@@ -170,11 +194,6 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Toast Notification Container -->
-    <div id="toast" class="fixed inset-0 flex items-center justify-center pointer-events-none">
-      <div class="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg opacity-0 transition-opacity duration-500"></div>
     </div>
 
     <!-- Load Main JavaScript Module -->
