@@ -20,11 +20,7 @@
           <div class="hidden md:flex space-x-8">
             <a href="dashboard.html" class="relative text-gray-700 hover:text-blue-600 font-medium after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-0 after:h-[2px] after:bg-blue-500 after:transition-all after:duration-300 hover:after:w-full">Dashboard</a>
             <a href="transactions.html" class="relative text-gray-700 hover:text-blue-600 font-medium after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-0 after:h-[2px] after:bg-blue-500 after:transition-all after:duration-300 hover:after:w-full">Transactions</a>
-<<<<<<< HEAD
             <a href="Savinggoals.html" class="relative text-blue-600 font-medium after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[2px] after:bg-blue-500">Set Goals</a>
-=======
-            <a href="Set Goals.html" class="relative text-blue-600 font-medium after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[2px] after:bg-blue-500">Set Goals</a>
->>>>>>> Added Password Validation and Implement Logout buttons
             <a href="charts.html" class="relative text-gray-700 hover:text-blue-600 font-medium after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-0 after:h-[2px] after:bg-blue-500 after:transition-all after:duration-300 hover:after:w-full">Charts</a>
             <a href="settings.html" class="relative text-gray-700 hover:text-blue-600 font-medium after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-0 after:h-[2px] after:bg-blue-500 after:transition-all after:duration-300 hover:after:w-full">Settings</a>
           </div>
@@ -39,7 +35,6 @@
         </div>
       </div>
 
-<<<<<<< HEAD
       <!-- Mobile Menu -->
       <div class="md:hidden" id="mobile-menu" style="display: none">
         <div class="px-2 pt-2 pb-3 space-y-1">
@@ -48,11 +43,9 @@
           <a href="Savinggoals.html" class="block px-3 py-2 rounded-md text-blue-600 bg-blue-50">Set Goals</a>
           <a href="charts.html" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50">Charts</a>
           <a href="settings.html" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50">Settings</a>
-          <a href="logout.php" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50">Logout</a>
+          <a href="#" onclick="showLogoutModal()" class="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50">Logout</a>
         </div>
       </div>
-=======
->>>>>>> Added Password Validation and Implement Logout buttons
     </nav>
 
     <!-- Sidebar -->
@@ -107,11 +100,7 @@
             </a>
           </li>
           <li>
-<<<<<<< HEAD
-            <a href="logout.php" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-=======
             <a href="#" onclick="showLogoutModal()" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
->>>>>>> Added Password Validation and Implement Logout buttons
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
@@ -137,11 +126,7 @@
           <div class="flex items-center justify-between">
             <div>
               <h3 class="font-semibold text-gray-600 mb-1">Total Savings</h3>
-<<<<<<< HEAD
               <p id="total-savings" class="text-3xl font-bold text-gray-800">$0.00</p>
-=======
-              <p id="total-saving" class="text-3xl font-bold text-gray-800">0</p>
->>>>>>> Added Password Validation and Implement Logout buttons
             </div>
             <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
               <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -211,16 +196,6 @@
       </div>
     </div>
 
-<<<<<<< HEAD
-    <!-- Load Main JavaScript Module -->
-    <script src="goals.js"></script>
-    <script src="dashboard.js"></script>
-=======
-    <!-- Toast Notification Container -->
-    <div id="toast" class="fixed inset-0 flex items-center justify-center pointer-events-none">
-      <div class="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg opacity-0 transition-opacity duration-500"></div>
-    </div>
-
     <!-- Logout Modal -->
     <div id="logoutModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50 flex items-center justify-center">
       <div class="relative bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-4 transform transition-all">
@@ -268,21 +243,5 @@
         });
       }
     </script>
-
-    <script>
-      // Sidebar Toggle Functionality
-      const sidebar = document.getElementById('sidebar');
-      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-      const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
-
-      mobileMenuBtn.addEventListener('click', () => {
-        sidebar.classList.remove('-translate-x-full');
-      });
-
-      sidebarCloseBtn.addEventListener('click', () => {
-        sidebar.classList.add('-translate-x-full');
-      });
-    </script>
->>>>>>> Added Password Validation and Implement Logout buttons
   </body>
 </html>
