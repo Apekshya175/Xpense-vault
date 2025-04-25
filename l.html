@@ -32,9 +32,12 @@
                 </div>
 
                 <div class="relative mb-5">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-xl pointer-events-none transition-colors duration-300">🔒</span>
-                    <input type="password" id="loginPassword" placeholder="Password" oninput="validateLoginForm()"
-                        class="w-full pl-12 pr-4 py-4 bg-white/90 border border-gray-200 rounded-2xl text-gray-800 text-[0.95rem] transition-all duration-300 hover:border-blue-300 hover:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none">
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-xl pointer-events-none transition-colors duration-300">🔒</span>
+                        <input type="password" id="loginPassword" placeholder="Password" oninput="validateLoginForm()"
+                            class="w-full pl-12 pr-4 py-4 bg-white/90 border border-gray-200 rounded-2xl text-gray-800 text-[0.95rem] transition-all duration-300 hover:border-blue-300 hover:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none">
+                    </div>
+                    <div id="passwordFeedback" class="text-red-500 text-sm mt-1" style="display: none;"></div>
                 </div>
 
                 <div class="flex justify-between items-center mb-6 text-gray-500 text-[0.95rem]">
@@ -66,10 +69,37 @@
             let email = document.getElementById("loginEmail").value.trim();
             let password = document.getElementById("loginPassword").value;
             let loginBtn = document.getElementById("loginBtn");
+            let passwordFeedback = document.getElementById("passwordFeedback");
     
             let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             let isValidEmail = emailPattern.test(email);
-            let isPasswordValid = password.length >= 6;
+            
+            // Password validation patterns
+            let hasNumber = /\d/.test(password);
+            let hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+            let isLongEnough = password.length >= 6;
+            
+            let isPasswordValid = hasNumber && hasSpecial && isLongEnough;
+            
+            // Provide feedback
+            if (password) {
+                let feedback = [];
+                if (!isLongEnough) feedback.push("at least 6 characters");
+                if (!hasNumber) feedback.push("a number");
+                if (!hasSpecial) feedback.push("a special character");
+                
+                if (feedback.length > 0) {
+                    passwordFeedback.textContent = "Password needs: " + feedback.join(", ");
+                    passwordFeedback.style.display = "block";
+                    passwordFeedback.className = "text-red-500 text-sm mt-1";
+                } else {
+                    passwordFeedback.textContent = "Password requirements met!";
+                    passwordFeedback.style.display = "block";
+                    passwordFeedback.className = "text-green-500 text-sm mt-1";
+                }
+            } else {
+                passwordFeedback.style.display = "none";
+            }
     
             loginBtn.disabled = !(isValidEmail && isPasswordValid);
         }
