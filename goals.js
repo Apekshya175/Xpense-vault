@@ -94,8 +94,8 @@ function updateTotalSavings() {
     .then(data => {
       if (!data.success) return;
       const total = parseFloat(data.total_saving).toFixed(2);
-      document.getElementById('total-savings').textContent       = `$${total}`;
-      document.getElementById('total-savings-table').textContent = `$${total}`;
+      document.getElementById('total-savings').textContent       = `Rs.${total}`;
+      document.getElementById('total-savings-table').textContent = `Rs.${total}`;
     })
     .catch(console.error);
 }
