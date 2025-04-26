@@ -1,4 +1,5 @@
 <?php
+session_start();
 include "db_setup.php"; // Ensures DB & table exist
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -23,6 +24,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("sss", $name, $email, $password);
 
     if ($stmt->execute()) {
+        // Get the user ID of the newly inserted user
+        $user_id = $conn->insert_id;
+        
+        // Store user data in session
+        $_SESSION['user_id'] = $user_id;
+        $_SESSION['name'] = $name;
+        $_SESSION['email'] = $email;
+        
         echo json_encode(["status" => "success", "message" => "Signup successful"]);
     } else {
         echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
