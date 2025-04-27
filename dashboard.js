@@ -1,219 +1,276 @@
-// transactions.js - Specific to transactions.html
-
-let transactions = [];
-let filteredTransactions = [];
-let chart;
-
-document.addEventListener("DOMContentLoaded", () => {
-  // Mobile Menu Toggle
+document.addEventListener("DOMContentLoaded", function () {
+  // Mobile menu toggle
   const mobileMenuButton = document.getElementById("mobile-menu-button");
   const mobileMenu = document.getElementById("mobile-menu");
   if (mobileMenuButton && mobileMenu) {
-    mobileMenuButton.addEventListener("click", () => {
-      if (
-        mobileMenu.style.display === "none" ||
-        mobileMenu.style.display === ""
-      ) {
-        mobileMenu.style.display = "block";
-      } else {
-        mobileMenu.style.display = "none";
-      }
-    });
+      mobileMenuButton.addEventListener("click", () => {
+          mobileMenu.style.display = mobileMenu.style.display === "none" ? "block" : "none";
+      });
   }
 
-  // Sidebar Toggle (using dedicated buttons)
+  // Sidebar toggle
   const sidebarToggleBtn = document.getElementById("mobile-menu-btn");
   const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
   const sidebar = document.getElementById("sidebar");
   if (sidebarToggleBtn && sidebar) {
-    sidebarToggleBtn.addEventListener("click", () => {
-      sidebar.classList.toggle("-translate-x-full");
-    });
+      sidebarToggleBtn.addEventListener("click", () => {
+          sidebar.classList.toggle("-translate-x-full");
+      });
   }
   if (sidebarCloseBtn && sidebar) {
-    sidebarCloseBtn.addEventListener("click", () => {
-      sidebar.classList.add("-translate-x-full");
-    });
+      sidebarCloseBtn.addEventListener("click", () => {
+          sidebar.classList.add("-translate-x-full");
+      });
   }
 
-  // Filter Functionality
-  const applyFilterBtn = document.getElementById("apply-filter-btn");
-  const clearFilterBtn = document.getElementById("clear-filter-btn");
-  if (applyFilterBtn) {
-    applyFilterBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      applyFilter();
-    });
-  }
-  if (clearFilterBtn) {
-    clearFilterBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      clearFilter();
-    });
+  // Chart instances
+  let pieChart;
+  let transactions = [];
+  let filteredTransactions = [];
+
+  // DOM elements
+  let applyFilterBtn, clearFilterBtn, startDateInput, endDateInput, typeFilterSelect, transactionList;
+
+  // Initialize the page
+  function init() {
+      // Initialize DOM elements
+      applyFilterBtn = document.getElementById("apply-filter-btn");
+      clearFilterBtn = document.getElementById("clear-filter-btn");
+      startDateInput = document.getElementById("startDate");
+      endDateInput = document.getElementById("endDate");
+      typeFilterSelect = document.getElementById("typeFilter");
+      transactionList = document.getElementById("transactions-table-body");
+
+      // Check if all required elements exist
+      if (!startDateInput || !endDateInput || !typeFilterSelect || !applyFilterBtn || !clearFilterBtn) {
+          console.error("Required filter elements not found");
+          return;
+      }
+
+      // Set default date range to last 30 days
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(endDate.getDate() - 30);
+      
+      startDateInput.valueAsDate = startDate;
+      endDateInput.valueAsDate = endDate;
+
+      // Setup event listeners after initializing date values
+      setupEventListeners();
+      fetchTransactions();
   }
 
-  // Delete Transaction via event delegation
-  const transactionList = document.getElementById("transactions-table-body");
-  if (transactionList) {
-    transactionList.addEventListener("click", (e) => {
-      if (e.target && e.target.classList.contains("delete-btn")) {
-        const transactionId = e.target.getAttribute("data-id");
-        // API call to delete transaction
-        fetch("api.php", {
+  // Set up event listeners
+  function setupEventListeners() {
+      // Only set up filter button listeners if the buttons exist
+      if (applyFilterBtn && clearFilterBtn) {
+          applyFilterBtn.addEventListener("click", applyFilters);
+          clearFilterBtn.addEventListener("click", clearFilters);
+      }
+      
+      // Delete transaction handler
+      if (transactionList) {
+          transactionList.addEventListener("click", (e) => {
+              if (e.target && e.target.classList.contains("delete-btn")) {
+                  const transactionId = e.target.getAttribute("data-id");
+                  deleteTransaction(transactionId);
+              }
+          });
+      }
+  }
+
+  // Delete transaction function
+  function deleteTransaction(id) {
+      fetch("api.php", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: transactionId }),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.message) {
+          body: JSON.stringify({ id: id }),
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.message) {
               alert(data.message);
               fetchTransactions();
-            } else {
+          } else {
               alert(data.error || "Error deleting transaction");
-            }
-          })
-          .catch((err) => console.error("Error deleting transaction:", err));
-      }
-    });
-  }
-
-  // --- Data and UI Functions ---
-
-  function getTotalIncome() {
-    return transactions
-      .filter((tx) => tx.type === "Income")
-      .reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
-  }
-
-  function getTotalExpense() {
-    return transactions
-      .filter((tx) => tx.type === "Expense")
-      .reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
-  }
-
-  function getTotalSaving() {
-    return transactions
-      .filter((tx) => tx.type === "Saving")
-      .reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
-  }
-
-  function updateSummary() {
-    const totalIncome = getTotalIncome();
-    const totalExpense = getTotalExpense();
-    const totalSaving = getTotalSaving();
-    const incomeElem = document.getElementById("total-income");
-    const expenseElem = document.getElementById("total-expense");
-    const savingElem = document.getElementById("total-saving");
-    const totalBudgetElem = document.getElementById("total-budget");
-    const totalBudgetElemtable = document.getElementById("total-budget-table");
-
-    if (incomeElem) incomeElem.textContent = `Rs.${totalIncome}`;
-    if (expenseElem) expenseElem.textContent = `Rs.${totalExpense}`;
-    if (savingElem) savingElem.textContent = `Rs.${totalSaving}`;
-
-    const totalbudget = totalIncome - totalExpense - totalSaving;
-    if (totalBudgetElem) {
-      totalBudgetElem.textContent = `Rs.${totalbudget}`;
-    }
-    const savings= totalIncome-totalExpense;
-    if(savingElem)
-    {
-      savingElem.textContent = `Rs.${savings}`;
-    }
-
-  }
-
-  function generateChart() {
-    const pieChartCanvas = document.getElementById("pieChart");
-    if (!pieChartCanvas) return;
-    const categories = ["Income", "Saving", "Expense"];
-    let amounts = [0, 0, 0];
-    filteredTransactions.forEach((tx) => {
-      if (tx.type === "Income") amounts[0] += parseFloat(tx.amount);
-      else if (tx.type === "Saving") amounts[1] += parseFloat(tx.amount);
-      else if (tx.type === "Expense") amounts[2] += parseFloat(tx.amount);
-    });
-    if (chart) chart.destroy();
-    chart = new Chart(pieChartCanvas, {
-      type: "pie",
-      data: {
-        labels: categories,
-        datasets: [
-          {
-            data: amounts,
-            backgroundColor: ["#4CAF50", "#2196F3", "#F44336"],
-          },
-        ],
-      },
-      options: {
-        plugins: {
-          datalabels: {
-            color: "#fff",
-            font: { weight: "bold" },
-            formatter: (value) => `$${value}`,
-          },
-        },
-      },
-    });
-  }
-
-  function renderTransactions() {
-    if (!transactionList) return;
-    transactionList.innerHTML = "";
-    filteredTransactions.forEach((tx) => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td class="py-2 px-4 border">${tx.type}</td>
-        <td class="py-2 px-4 border">${tx.expenseType}</td>
-        <td class="py-2 px-4 border">${tx.amount}</td>
-        <td class="py-2 px-4 border">${tx.date}</td>
-        <td class="py-2 px-4 border">
-          <button class="delete-btn text-red-500" data-id="${tx.id}">Delete</button>
-        </td>
-      `;
-      transactionList.appendChild(row);
-    });
-  }
-
-  function fetchTransactions() {
-    fetch("api.php")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Fetched transactions:", data);
-        transactions = data;
-        filteredTransactions = [...transactions];
-        renderTransactions();
-        updateSummary();
-        generateChart();
+          }
       })
-      .catch((err) => console.error("Error fetching transactions:", err));
+      .catch(error => console.error("Error deleting transaction:", error));
   }
 
-  function applyFilter() {
-    const filterDateInput = document.getElementById("filterDate");
-    const filterDate = filterDateInput.value;
-    if (filterDate) {
-      filteredTransactions = transactions.filter(
-        (tx) => tx.date === filterDate
-      );
-    } else {
+  // Fetch transactions from API
+  function fetchTransactions() {
+      fetch("api.php")
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error("Network response was not ok");
+              }
+              return response.json();
+          })
+          .then(data => {
+              if (data.error) {
+                  console.error("API Error:", data.error);
+                  if (data.error === "unauthorized") {
+                      window.location.href = "l.html";
+                  }
+                  return;
+              }
+              transactions = data;
+              filteredTransactions = [...transactions];
+              updateSummary();
+              renderTransactions();
+              renderPieChart();
+          })
+          .catch(error => {
+              console.error("Error fetching transactions:", error);
+          });
+  }
+
+  // Apply filters
+  function applyFilters() {
+      if (!startDateInput || !endDateInput || !typeFilterSelect) {
+          console.error("Required filter elements not found");
+          return;
+      }
+
+      const startDate = startDateInput.value;
+      const endDate = endDateInput.value;
+      const typeFilter = typeFilterSelect.value;
+
+      filteredTransactions = transactions.filter(transaction => {
+          // Date filter
+          if (startDate && transaction.date < startDate) return false;
+          if (endDate && transaction.date > endDate) return false;
+          
+          // Type filter
+          if (typeFilter !== "all" && transaction.type !== typeFilter) return false;
+          
+          return true;
+      });
+
+      updateSummary();
+      renderTransactions();
+      renderPieChart();
+  }
+
+  // Clear filters
+  function clearFilters() {
+      startDateInput.value = "";
+      endDateInput.value = "";
+      typeFilterSelect.value = "all";
       filteredTransactions = [...transactions];
-    }
-    renderTransactions();
-    updateSummary();
-    generateChart();
+      updateSummary();
+      renderTransactions();
+      renderPieChart();
   }
 
-  function clearFilter() {
-    const filterDateInput = document.getElementById("filterDate");
-    filterDateInput.value = "";
-    filteredTransactions = [...transactions];
-    renderTransactions();
-    updateSummary();
-    generateChart();
+  // Update summary cards
+  function updateSummary() {
+      const totalIncome = filteredTransactions
+          .filter(tx => tx.type === "Income")
+          .reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
+          
+      const totalExpense = filteredTransactions
+          .filter(tx => tx.type === "Expense")
+          .reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
+          
+      const totalSaving = filteredTransactions
+          .filter(tx => tx.type === "Saving")
+          .reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
+          
+      const totalBudget = totalIncome - totalExpense - totalSaving;
+
+      document.getElementById("total-income").textContent = `$${totalIncome.toFixed(2)}`;
+      document.getElementById("total-expense").textContent = `$${totalExpense.toFixed(2)}`;
+      document.getElementById("total-saving").textContent = `$${totalSaving.toFixed(2)}`;
+      document.getElementById("total-budget").textContent = `$${totalBudget.toFixed(2)}`;
+      document.getElementById("total-budget-display").textContent = `$${totalBudget.toFixed(2)}`;
   }
 
-  // Initial load of transactions
-  fetchTransactions();
+  // Render transactions table
+  function renderTransactions() {
+      if (!transactionList) return;
+      
+      transactionList.innerHTML = "";
+      
+      filteredTransactions.forEach(tx => {
+          const row = document.createElement("tr");
+          row.className = "hover:bg-gray-50";
+          row.innerHTML = `
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${tx.type || 'N/A'}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${tx.expenseType || 'N/A'}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm ${tx.type === 'Income' ? 'text-green-600' : 'text-red-600'}">$${parseFloat(tx.amount).toFixed(2)}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${tx.date}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                  <button class="delete-btn text-red-600 hover:text-red-900" data-id="${tx.id}">Delete</button>
+              </td>
+          `;
+          transactionList.appendChild(row);
+      });
+  }
+
+  // Render pie chart
+  function renderPieChart() {
+      const ctx = document.getElementById("pieChart").getContext("2d");
+      
+      // Group by expense type (for expenses only)
+      const categoryData = {};
+      filteredTransactions.forEach(tx => {
+          if (tx.type === "Expense") {
+              const category = tx.expenseType || "Uncategorized";
+              categoryData[category] = (categoryData[category] || 0) + parseFloat(tx.amount);
+          }
+      });
+
+      const labels = Object.keys(categoryData);
+      const data = Object.values(categoryData);
+
+      if (pieChart) pieChart.destroy();
+
+      if (labels.length > 0) {
+          pieChart = new Chart(ctx, {
+              type: "pie",
+              data: {
+                  labels: labels,
+                  datasets: [{
+                      data: data,
+                      backgroundColor: [
+                          "#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0",
+                          "#9966FF", "#FF9F40", "#8AC249", "#EA5545",
+                          "#FEB147", "#B2D3C2", "#0F7173", "#EEC584"
+                      ],
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                      legend: {
+                          position: "right",
+                      },
+                      tooltip: {
+                          callbacks: {
+                              label: function(context) {
+                                  const value = context.raw;
+                                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                  const percentage = Math.round((value / total) * 100);
+                                  return `${context.label}: $${value.toFixed(2)} (${percentage}%)`;
+                              }
+                          }
+                      }
+                  }
+              }
+          });
+      } else {
+          // Display message when no expense data available
+          ctx.font = "16px Arial";
+          ctx.fillStyle = "#666";
+          ctx.textAlign = "center";
+          ctx.fillText("No expense data to display", ctx.canvas.width / 2, ctx.canvas.height / 2);
+      }
+  }
+
+  // Initialize the page
+  init();
 });
