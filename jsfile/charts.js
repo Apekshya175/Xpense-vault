@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                return `Balance: $${context.raw.toFixed(2)}`;
+                                return `Balance: Rs.${context.raw.toFixed(2)}`;
                             }
                         }
                     }
@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         beginAtZero: false,
                         title: {
                             display: true,
-                            text: "Balance ($)"
+                            text: "Balance (Rs.)"
                         },
                         grid: {
                             color: "rgba(0, 0, 0, 0.05)"
@@ -262,7 +262,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                return `${context.dataset.label}: $${context.raw.toFixed(2)}`;
+                                return `${context.dataset.label}: Rs.${context.raw.toFixed(2)}`;
                             }
                         }
                     }
@@ -272,7 +272,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: "Amount ($)"
+                            text: "Amount (Rs.)"
                         },
                         grid: {
                             color: "rgba(0, 0, 0, 0.05)"
@@ -337,7 +337,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 const value = context.raw;
                                 const total = context.dataset.data.reduce((a, b) => a + b, 0);
                                 const percentage = Math.round((value / total) * 100);
-                                return `${context.label}: $${value.toFixed(2)} (${percentage}%)`;
+                                return `${context.label}: Rs.${value.toFixed(2)} (${percentage}%)`;
                             }
                         }
                     }
