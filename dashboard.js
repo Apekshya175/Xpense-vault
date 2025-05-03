@@ -1,27 +1,30 @@
-// transactions.js - Specific to transactions.html
+document.addEventListener("DOMContentLoaded", () => {
+  fetch("Savinggoal.php?action=get_saving_total")
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) {
+        const total = parseFloat(data.total_saving).toFixed(2);
+        const savingElem = document.getElementById("total-saving");
+        if (savingElem) savingElem.textContent = `Rs.${total}`;
+      }
+    })
+    .catch(console.error);
+});
 
 let transactions = [];
 let filteredTransactions = [];
 let chart;
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Mobile Menu Toggle
   const mobileMenuButton = document.getElementById("mobile-menu-button");
   const mobileMenu = document.getElementById("mobile-menu");
   if (mobileMenuButton && mobileMenu) {
     mobileMenuButton.addEventListener("click", () => {
-      if (
-        mobileMenu.style.display === "none" ||
-        mobileMenu.style.display === ""
-      ) {
-        mobileMenu.style.display = "block";
-      } else {
-        mobileMenu.style.display = "none";
-      }
+      mobileMenu.style.display =
+        mobileMenu.style.display === "block" ? "none" : "block";
     });
   }
 
-  // Sidebar Toggle (using dedicated buttons)
   const sidebarToggleBtn = document.getElementById("mobile-menu-btn");
   const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
   const sidebar = document.getElementById("sidebar");
@@ -36,43 +39,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Initialize date filters to last 30 days
-  const endDate = new Date();
-  const startDate = new Date();
-  startDate.setDate(endDate.getDate() - 30);
-  
-  const startDateInput = document.getElementById("startDate");
-  const endDateInput = document.getElementById("endDate");
-  const typeFilterSelect = document.getElementById("typeFilter");
-  
-  if (startDateInput && endDateInput) {
-    startDateInput.valueAsDate = startDate;
-    endDateInput.valueAsDate = endDate;
-  }
-
-  // Filter Functionality
   const applyFilterBtn = document.getElementById("apply-filter-btn");
   const clearFilterBtn = document.getElementById("clear-filter-btn");
-  if (applyFilterBtn) {
+  if (applyFilterBtn)
     applyFilterBtn.addEventListener("click", (e) => {
       e.preventDefault();
       applyFilter();
     });
-  }
-  if (clearFilterBtn) {
+  if (clearFilterBtn)
     clearFilterBtn.addEventListener("click", (e) => {
       e.preventDefault();
       clearFilter();
     });
-  }
 
-  // Delete Transaction via event delegation
   const transactionList = document.getElementById("transactions-table-body");
   if (transactionList) {
     transactionList.addEventListener("click", (e) => {
-      if (e.target && e.target.classList.contains("delete-btn")) {
-        const transactionId = e.target.getAttribute("data-id");
-        // API call to delete transaction
+      if (e.target.classList.contains("delete-btn")) {
+        const transactionId = e.target.dataset.id;
         fetch("api.php", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
@@ -80,178 +64,122 @@ document.addEventListener("DOMContentLoaded", () => {
         })
           .then((res) => res.json())
           .then((data) => {
-            if (data.message) {
-              alert(data.message);
-              fetchTransactions();
-            } else {
-              alert(data.error || "Error deleting transaction");
-            }
+            alert(data.message || data.error);
+            fetchTransactions();
           })
-          .catch((err) => console.error("Error deleting transaction:", err));
+          .catch((err) => console.error(err));
       }
     });
   }
 
-  // --- Data and UI Functions ---
-
-  function getTotalIncome() {
-    return transactions
-      .filter((tx) => tx.type === "Income")
-      .reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
-  }
-
-  function getTotalExpense() {
-    return transactions
-      .filter((tx) => tx.type === "Expense")
-      .reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
-  }
-
-  function getTotalSaving() {
-    return transactions
-      .filter((tx) => tx.type === "Saving")
-      .reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
-  }
-
-  function updateSummary() {
-    const totalIncome = getTotalIncome();
-    const totalExpense = getTotalExpense();
-    const totalSaving = getTotalSaving();
-    const incomeElem = document.getElementById("total-income");
-    const expenseElem = document.getElementById("total-expense");
-    const savingElem = document.getElementById("total-saving");
-    const totalBudgetElem = document.getElementById("total-budget");
-    const totalBudgetElemtable = document.getElementById("total-budget-table");
-
-    if (incomeElem) incomeElem.textContent = `Rs.${totalIncome}`;
-    if (expenseElem) expenseElem.textContent = `Rs.${totalExpense}`;
-    if (savingElem) savingElem.textContent = `Rs.${totalSaving}`;
-
-    const totalbudget = totalIncome - totalExpense - totalSaving;
-    if (totalBudgetElem) {
-      totalBudgetElem.textContent = `Rs.${totalbudget}`;
-    }
-    const savings= totalIncome-totalExpense;
-    if(savingElem)
-    {
-      savingElem.textContent = `Rs.${savings}`;
-    }
-  }
-
-  function generateChart() {
-    const pieChartCanvas = document.getElementById("pieChart");
-    if (!pieChartCanvas) return;
-    const categories = ["Income", "Saving", "Expense"];
-    let amounts = [0, 0, 0];
-    filteredTransactions.forEach((tx) => {
-      if (tx.type === "Income") amounts[0] += parseFloat(tx.amount);
-      else if (tx.type === "Saving") amounts[1] += parseFloat(tx.amount);
-      else if (tx.type === "Expense") amounts[2] += parseFloat(tx.amount);
-    });
-    if (chart) chart.destroy();
-    chart = new Chart(pieChartCanvas, {
-      type: "pie",
-      data: {
-        labels: categories,
-        datasets: [
-          {
-            data: amounts,
-            backgroundColor: ["#4CAF50", "#2196F3", "#F44336"],
-          },
-        ],
-      },
-      options: {
-        plugins: {
-          datalabels: {
-            color: "#fff",
-            font: { weight: "bold" },
-            formatter: (value) => `Rs.${value}`,
-          },
-        },
-      },
-    });
-  }
-
-  function renderTransactions() {
-    if (!transactionList) return;
-    transactionList.innerHTML = "";
-    filteredTransactions.forEach((tx) => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td class="py-2 px-4 border">${tx.type}</td>
-        <td class="py-2 px-4 border">${tx.expenseType}</td>
-        <td class="py-2 px-4 border">${tx.amount}</td>
-        <td class="py-2 px-4 border">${tx.date}</td>
-        <td class="py-2 px-4 border">
-          <button class="delete-btn text-red-500" data-id="${tx.id}">Delete</button>
-        </td>
-      `;
-      transactionList.appendChild(row);
-    });
-  }
-
-  function fetchTransactions() {
-    fetch("api.php")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Fetched transactions:", data);
-        transactions = data;
-        filteredTransactions = [...transactions];
-        renderTransactions();
-        updateSummary();
-        generateChart();
-      })
-      .catch((err) => console.error("Error fetching transactions:", err));
-  }
-
-  function applyFilter() {
-    const startDate = startDateInput ? startDateInput.value : null;
-    const endDate = endDateInput ? endDateInput.value : null;
-    const typeFilter = typeFilterSelect ? typeFilterSelect.value : "all";
-    const filterDateInput = document.getElementById("filterDate");
-    const filterDate = filterDateInput ? filterDateInput.value : null;
-
-    filteredTransactions = transactions.filter((transaction) => {
-      // Date range filter
-      if (startDate && transaction.date < startDate) return false;
-      if (endDate && transaction.date > endDate) return false;
-      
-      // Specific date filter (original filter)
-      if (filterDate && transaction.date !== filterDate) return false;
-      
-      // Type filter
-      if (typeFilter !== "all" && transaction.type !== typeFilter) return false;
-      
-      return true;
-    });
-
-    renderTransactions();
-    updateSummary();
-    generateChart();
-  }
-
-  function clearFilter() {
-    if (startDateInput) startDateInput.value = "";
-    if (endDateInput) endDateInput.value = "";
-    if (typeFilterSelect) typeFilterSelect.value = "all";
-    
-    const filterDateInput = document.getElementById("filterDate");
-    if (filterDateInput) filterDateInput.value = "";
-    
-    // Reset to last 30 days
-    if (startDateInput && endDateInput) {
-      const endDate = new Date();
-      const startDate = new Date();
-      startDate.setDate(endDate.getDate() - 30);
-      startDateInput.valueAsDate = startDate;
-      endDateInput.valueAsDate = endDate;
-    }
-    
-    filteredTransactions = [...transactions];
-    renderTransactions();
-    updateSummary();
-    generateChart();
-  }
-
-  // Initial load of transactions
   fetchTransactions();
 });
+
+function getTotalIncome() {
+  return transactions
+    .filter((tx) => tx.type === "Income")
+    .reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
+}
+
+function getTotalExpense() {
+  return transactions
+    .filter((tx) => tx.type === "Expense")
+    .reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
+}
+
+function updateSummary() {
+  const income = getTotalIncome();
+  const expense = getTotalExpense();
+  const incomeElem = document.getElementById("total-income");
+  const expenseElem = document.getElementById("total-expense");
+  const savingElem = document.getElementById("total-saving");
+  const budgetElem = document.getElementById("total-budget");
+  const budgetTable = document.getElementById("total-budget-table");
+
+  if (incomeElem) incomeElem.textContent = `Rs.${income}`;
+  if (expenseElem) expenseElem.textContent = `Rs.${expense}`;
+
+  fetch("Savinggoal.php?action=get_saving_total")
+    .then((res) => res.json())
+    .then((data) => {
+      if (!data.success) return;
+      const saved = parseFloat(data.total_saving).toFixed(2);
+      if (savingElem) savingElem.textContent = `Rs.${saved}`;
+      const budget = income - expense - parseFloat(saved);
+      if (budgetElem) budgetElem.textContent = `Rs.${budget}`;
+      if (budgetTable) budgetTable.textContent = `Rs.${budget}`;
+    })
+    .catch(console.error);
+}
+
+function generateChart() {
+  const ctx = document.getElementById("pieChart");
+  if (!ctx) return;
+
+  const inc = getTotalIncome();
+  const exp = getTotalExpense();
+
+  fetch("Savinggoal.php?action=get_saving_total")
+    .then((res) => res.json())
+    .then((data) => {
+      const saved = data.success ? parseFloat(data.total_saving) : 0;
+
+      const categories = ["Income", "Saved", "Expense"];
+      const amounts = [inc, saved, exp];
+
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: "pie",
+        data: { labels: categories, datasets: [{ data: amounts }] },
+      });
+    })
+    .catch(console.error);
+}
+
+function renderTransactions() {
+  const list = document.getElementById("transactions-table-body");
+  if (!list) return;
+  list.innerHTML = filteredTransactions
+    .map(
+      (tx) => `
+    <tr>
+      <td class="py-2 px-4 border">${tx.type}</td>
+      <td class="py-2 px-4 border">${tx.expenseType}</td>
+      <td class="py-2 px-4 border">${tx.amount}</td>
+      <td class="py-2 px-4 border">${tx.date}</td>
+      <td class="py-2 px-4 border"><button class="delete-btn text-red-500" data-id="${tx.id}">Delete</button></td>
+    </tr>`
+    )
+    .join("");
+}
+
+function fetchTransactions() {
+  fetch("api.php")
+    .then((res) => res.json())
+    .then((data) => {
+      transactions = data;
+      filteredTransactions = [...data];
+      renderTransactions();
+      updateSummary();
+      generateChart();
+    })
+    .catch(console.error);
+}
+
+function applyFilter() {
+  const date = document.getElementById("filterDate").value;
+  filteredTransactions = date
+    ? transactions.filter((tx) => tx.date === date)
+    : [...transactions];
+  renderTransactions();
+  updateSummary();
+  generateChart();
+}
+
+function clearFilter() {
+  document.getElementById("filterDate").value = "";
+  filteredTransactions = [...transactions];
+  renderTransactions();
+  updateSummary();
+  generateChart();
+}
