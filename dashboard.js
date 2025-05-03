@@ -36,6 +36,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Initialize date filters to last 30 days
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setDate(endDate.getDate() - 30);
+  
+  const startDateInput = document.getElementById("startDate");
+  const endDateInput = document.getElementById("endDate");
+  const typeFilterSelect = document.getElementById("typeFilter");
+  
+  if (startDateInput && endDateInput) {
+    startDateInput.valueAsDate = startDate;
+    endDateInput.valueAsDate = endDate;
+  }
+
   // Filter Functionality
   const applyFilterBtn = document.getElementById("apply-filter-btn");
   const clearFilterBtn = document.getElementById("clear-filter-btn");
@@ -121,7 +135,6 @@ document.addEventListener("DOMContentLoaded", () => {
     {
       savingElem.textContent = `Rs.${savings}`;
     }
-
   }
 
   function generateChart() {
@@ -151,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
           datalabels: {
             color: "#fff",
             font: { weight: "bold" },
-            formatter: (value) => `$${value}`,
+            formatter: (value) => `Rs.${value}`,
           },
         },
       },
@@ -191,23 +204,48 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function applyFilter() {
+    const startDate = startDateInput ? startDateInput.value : null;
+    const endDate = endDateInput ? endDateInput.value : null;
+    const typeFilter = typeFilterSelect ? typeFilterSelect.value : "all";
     const filterDateInput = document.getElementById("filterDate");
-    const filterDate = filterDateInput.value;
-    if (filterDate) {
-      filteredTransactions = transactions.filter(
-        (tx) => tx.date === filterDate
-      );
-    } else {
-      filteredTransactions = [...transactions];
-    }
+    const filterDate = filterDateInput ? filterDateInput.value : null;
+
+    filteredTransactions = transactions.filter((transaction) => {
+      // Date range filter
+      if (startDate && transaction.date < startDate) return false;
+      if (endDate && transaction.date > endDate) return false;
+      
+      // Specific date filter (original filter)
+      if (filterDate && transaction.date !== filterDate) return false;
+      
+      // Type filter
+      if (typeFilter !== "all" && transaction.type !== typeFilter) return false;
+      
+      return true;
+    });
+
     renderTransactions();
     updateSummary();
     generateChart();
   }
 
   function clearFilter() {
+    if (startDateInput) startDateInput.value = "";
+    if (endDateInput) endDateInput.value = "";
+    if (typeFilterSelect) typeFilterSelect.value = "all";
+    
     const filterDateInput = document.getElementById("filterDate");
-    filterDateInput.value = "";
+    if (filterDateInput) filterDateInput.value = "";
+    
+    // Reset to last 30 days
+    if (startDateInput && endDateInput) {
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(endDate.getDate() - 30);
+      startDateInput.valueAsDate = startDate;
+      endDateInput.valueAsDate = endDate;
+    }
+    
     filteredTransactions = [...transactions];
     renderTransactions();
     updateSummary();
